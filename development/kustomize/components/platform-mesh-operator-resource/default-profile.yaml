@@ -586,6 +586,7 @@ data:
             datastore:
               applyMigrations: true
               engine: postgres
+              existingSecret: cnpg-openfga-user
               maxOpenConns: 30
               migrationType: initContainer
               migrations:
@@ -593,7 +594,10 @@ data:
                   pullPolicy: Always
                   repository: groundnuty/k8s-wait-for
                   tag: v2.0
-              uri: postgres://postgres:openfga-password@openfga-postgres.platform-mesh-system.svc.cluster.local:5432/postgres?sslmode=disable
+              secretKeys:
+                passwordKey: password
+                usernameKey: username
+              uri: postgres://platform-mesh-pg-rw.platform-mesh-system.svc.cluster.local:5432/openfga?sslmode=disable
             extraEnvVars:
             - name: OPENFGA_EXPERIMENTALS
               value: enable-list-users
@@ -608,14 +612,7 @@ data:
             podAnnotations:
               traffic.sidecar.istio.io/excludeInboundPorts: "2112"
             postgresql:
-              enabled: true
-              auth:
-                password: openfga-password
-              image:
-                registry: ghcr.io/platform-mesh
-                repository: upstream-images/postgresql
-                tag: 17.6.0-debian-12-r4
-              nameOverride: postgres
+              enabled: false
             replicaCount: 1
             telemetry:
               trace:
