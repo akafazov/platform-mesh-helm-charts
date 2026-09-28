@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: Test the CloudNativePG manifests
+templates:
+  - cnpg/cluster.yaml
+tests:
+  - it: requires TLS for the OpenFGA database role
+    set:
+      cnpg:
+        enabled: true
+    asserts:
+      - contains:
+          path: spec.postgresql.pg_hba
+          content: hostnossl openfga openfga all reject
+
+  - it: applies TLS enforcement to the configured OpenFGA role
+    set:
+      cnpg:
+        enabled: true
+        roles:
+          openfga:
+            username: custom-openfga
+    asserts:
+      - contains:
+          path: spec.postgresql.pg_hba
+          content: hostnossl openfga custom-openfga all reject
