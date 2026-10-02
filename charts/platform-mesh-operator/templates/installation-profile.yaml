@@ -1,0 +1,3 @@
+{{- if .Values.installation.enabled }}
+{{ .Files.Get (printf "files/%s-profile.yaml" .Values.installation.profile) }}
+{{- end }}
